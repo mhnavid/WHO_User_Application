@@ -39,11 +39,11 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btnLocationMark"
+                android:id="@+id/btnNearbyCerterList"
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:background="@color/colorYellow"
                 android:paddingLeft="10dp"
@@ -53,7 +53,7 @@
                 android:textAllCaps="false"
                 android:textColor="#FDFFFD"
                 android:textScaleX="1.1"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:visibility="visible"
                 tools:visibility="visible" />
 

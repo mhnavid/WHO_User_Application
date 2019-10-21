@@ -12,6 +12,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -48,6 +50,7 @@ public class MapActivity extends AppCompatActivity
     private FusedLocationProviderClient mFusedLocationProviderClient;
     AutocompleteSupportFragment autocompleteFragment;
     private Marker locationMarker;
+    private Button nearbyCenterListBtn;
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private boolean mPermissionDenied = false;
@@ -64,6 +67,7 @@ public class MapActivity extends AppCompatActivity
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        nearbyCenterListBtn = findViewById(R.id.btnNearbyCerterList);
 
         if (!Places.isInitialized()) {
             Places.initialize(getApplicationContext(), getString(R.string.api_key));
@@ -86,6 +90,14 @@ public class MapActivity extends AppCompatActivity
 
         assert mapFragment != null;
         mapFragment.getMapAsync( this);
+
+        nearbyCenterListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MapActivity.this, NearbyCenterListActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

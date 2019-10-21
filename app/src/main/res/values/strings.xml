@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">WHO User Application</string>
+    <!--    <string name="api_key">AIzaSyBFed-Oi6ZE5vSkbvsbN611YzKuuE4AR8Y</string>-->
+    <string name="api_key">AIzaSyBT4TbgSiHelBC2R_yfpnTRavhR9d90JwY</string>
+
+    <string name="btn_nearby_centers">Nearby Centers</string>
 </resources>

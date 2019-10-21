@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().hide();
 
         frontPageImageView = findViewById(R.id.FrontPageImageView);
 
@@ -34,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     // this code will be executed after 2 seconds
-//                    Intent intent = new Intent(MainActivity.this, NameEntryActivity.class);
-//                    startActivity(intent);
+                    Intent intent = new Intent(MainActivity.this, MapActivity.class);
+                    startActivity(intent);
                 }
             }, 2000);
         }else {
@@ -45,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
         frontPageImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(MainActivity.this, NameEntryActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, MapActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         boolean haveConnectedMobile = false;
 
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
         NetworkInfo[] netInfo = cm.getAllNetworkInfo();
         for (NetworkInfo ni : netInfo)
         {
@@ -99,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     // this code will be executed after 2 seconds
-//                                    Intent intent = new Intent(MainActivity.this, NameEntryActivity.class);
-//                                    startActivity(intent);
+                                    Intent intent = new Intent(MainActivity.this, MapActivity.class);
+                                    startActivity(intent);
                                 }
                             }, 2000);
                         }

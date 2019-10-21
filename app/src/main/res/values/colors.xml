@@ -7,4 +7,10 @@
     <color name="whoColorBlueLight">#008DC9</color>
     <color name="whoColorBlueDark">#0072BF</color>
     <color name="whoColorWhite">#FDFFFD</color>
+
+    <color name="colorYellow">#fdd703</color>
+    <color name="colorYellowLight">#ffff53</color>
+    <color name="colorYellowDark">#c5a600</color>
+
+    <color name="colorBlack">#000000</color>
 </resources>

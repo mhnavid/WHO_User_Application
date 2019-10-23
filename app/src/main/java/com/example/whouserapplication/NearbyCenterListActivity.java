@@ -35,7 +35,7 @@ public class NearbyCenterListActivity extends AppCompatActivity {
 
     private void setUpRecyclerView(){
         RecyclerView centerListRecyclerView = findViewById(R.id.centerListRecyclerView);
-        CenterListAdapter centerListAdapter = new CenterListAdapter(centerListFull);
+        CenterListAdapter centerListAdapter = new CenterListAdapter(getApplicationContext(), centerListFull);
         centerListRecyclerView.setAdapter(centerListAdapter);
         centerListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

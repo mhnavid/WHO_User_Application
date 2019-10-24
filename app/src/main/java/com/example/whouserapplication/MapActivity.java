@@ -7,11 +7,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -61,6 +65,8 @@ public class MapActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
+        getSupportActionBar().setTitle(R.string.app_name);
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
@@ -94,7 +100,7 @@ public class MapActivity extends AppCompatActivity
         nearbyCenterListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MapActivity.this, NearbyCenterListActivity.class);
+                Intent intent = new Intent(MapActivity.this, PlaceDetailsActivity.class);
                 startActivity(intent);
             }
         });
@@ -218,5 +224,44 @@ public class MapActivity extends AppCompatActivity
             startActivity(intent);
         }
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_language, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.local_english:
+                setNewLocale(this, LocaleManager.ENGLISH);
+                return true;
+            case R.id.local_Bengali:
+                setNewLocale(this, LocaleManager.BENGALI);
+                Log.d("bengali",String.valueOf(LocaleManager.getLocale(getResources())));
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleManager.setLocale(newBase));
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        LocaleManager.setLocale(this);
+    }
+
+    private void setNewLocale(AppCompatActivity mContext, @LocaleManager.LocaleDef String language) {
+        LocaleManager.setNewLocale(this, language);
+        Intent intent = mContext.getIntent();
+        startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 }

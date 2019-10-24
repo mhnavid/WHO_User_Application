@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name"></string>
+    <string name="app_name">ইপিআই টীকাদান কেন্দ্র</string>
+
+    <string name="api_key">AIzaSyBFed-Oi6ZE5vSkbvsbN611YzKuuE4AR8Y</string>
+
+    <string name="btn_nearby_centers">Nearby Centers</string>
+    <string name="btn_call">কল</string>
+    <string name="btn_direction">দিকনির্দেশনা</string>
 </resources>

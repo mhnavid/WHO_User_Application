@@ -16,6 +16,7 @@
             android:id="@+id/centerImageView"
             android:layout_width="match_parent"
             android:layout_height="150dp"
+            android:focusable="true"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
         <LinearLayout
@@ -51,6 +52,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"
                         android:paddingLeft="2dp"
+                        android:paddingRight="2dp"
                         android:text="Karwan Bazar, Dhaka"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -59,6 +61,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
                     android:layout_weight=".9"
                     android:orientation="horizontal">
 
@@ -67,7 +70,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_weight=".5"
+                        android:layout_weight=".4"
                         android:background="@color/colorYellow"
                         android:text="@string/btn_direction" />
 
@@ -75,17 +78,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_weight=".5"
+                        android:layout_weight=".6"
                         android:background="@color/colorYellow"
                         android:padding="1dp">
 
                         <Button
                             android:id="@+id/btnCall"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:background="@color/whoColorWhite"
                             android:text="@string/btn_call"
-                            android:textSize="15sp" />
+                            android:textSize="14sp" />
                     </FrameLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -424,7 +427,7 @@
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/editText"
+                        android:id="@+id/commentText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
@@ -434,7 +437,9 @@
                         android:inputType="textMultiLine"
                         android:lines="5"
                         android:maxLines="10"
-                        android:minLines="4" />
+                        android:minLines="5"
+                        android:selectAllOnFocus="false"
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 

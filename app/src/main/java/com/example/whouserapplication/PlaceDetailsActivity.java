@@ -1,14 +1,21 @@
 package com.example.whouserapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -21,75 +28,76 @@ import java.util.List;
 
 public class PlaceDetailsActivity extends AppCompatActivity {
 
-    ExpandableListView expandableListView;
-    ExpandableListAdapter expandableListAdapter;
-    List<String> expandableListTitle;
-    HashMap<String, List<DayTime>> expandableListDetail;
 
-    TextView phoneNoText;
+    TextView commentText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_details);
 
-//        expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
-//        expandableListDetail = ExpandableListDataPump.getData();
-//        expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
-//        expandableListAdapter = new DayTimeExpandableListAdapter(this, expandableListTitle, expandableListDetail);
-//        expandableListView.setAdapter(expandableListAdapter);
-//
-//        phoneNoText = findViewById(R.id.phoneNoText);
+        getSupportActionBar().setTitle(R.string.app_name);
 
-//        phoneNoText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                openDialer();
-//            }
-//        });
-//
-//        expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-//
-//            @Override
-//            public void onGroupExpand(int groupPosition) {
-//                Toast.makeText(getApplicationContext(),
-//                        expandableListTitle.get(groupPosition) + " List Expanded.",
-//                        Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        expandableListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-//
-//            @Override
-//            public void onGroupCollapse(int groupPosition) {
-//                Toast.makeText(getApplicationContext(),
-//                        expandableListTitle.get(groupPosition) + " List Collapsed.",
-//                        Toast.LENGTH_SHORT).show();
-//
-//            }
-//        });
-//
-//        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-//            @Override
-//            public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l) {
-//                Toast.makeText(
-//                        getApplicationContext(),
-//                        expandableListTitle.get(groupPosition)
-//                                + " -> "
-//                                + expandableListDetail.get(
-//                                expandableListTitle.get(groupPosition)).get(
-//                                childPosition), Toast.LENGTH_SHORT
-//                ).show();
-//                return false;
-//            }
-//        });
+        commentText = findViewById(R.id.commentText);
+        commentText.setFocusable(false);
+
+        commentText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                commentText.requestFocus();
+                commentText.setFocusableInTouchMode(true);
+                return false;
+            }
+        });
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_language, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.local_english:
+                setNewLocale(this, LocaleManager.ENGLISH);
+                return true;
+            case R.id.local_Bengali:
+                setNewLocale(this, LocaleManager.BENGALI);
+                Log.d("bengali",String.valueOf(LocaleManager.getLocale(getResources())));
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleManager.setLocale(newBase));
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        LocaleManager.setLocale(this);
+    }
+
+    private void setNewLocale(AppCompatActivity mContext, @LocaleManager.LocaleDef String language) {
+        LocaleManager.setNewLocale(this, language);
+        Intent intent = mContext.getIntent();
+        startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     private void openDialer(){
         Intent intent = new Intent(Intent.ACTION_DIAL);
         // Send phone number to intent as data
-        intent.setData(Uri.parse("tel:" + phoneNoText.getText().toString().trim()));
+//        intent.setData(Uri.parse("tel:" + phoneNoText.getText().toString().trim()));
         // Start the dialer app activity with number
         startActivity(intent);
     }
+
+
 }

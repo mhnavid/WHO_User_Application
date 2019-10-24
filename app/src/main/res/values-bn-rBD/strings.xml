@@ -7,4 +7,10 @@
     <string name="btn_nearby_centers">Nearby Centers</string>
     <string name="btn_call">কল</string>
     <string name="btn_direction">দিকনির্দেশনা</string>
+    <string name="btn_submit">পাঠান</string>
+
+    <string name="text_days">দিন</string>
+    <string name="text_time">সময়</string>
+    <string name="text_organized_by">বাস্তবায়নে</string>
+    <string name="text_comments">মতামত</string>
 </resources>

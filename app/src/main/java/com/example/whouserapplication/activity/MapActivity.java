@@ -142,14 +142,6 @@ public class MapActivity extends AppCompatActivity
     }
 
     private void markLocationOnMap() {
-//        locationMarker = mMap.addMarker(new MarkerOptions()
-//                .position(new LatLng(23.752212, 90.390325))
-//                .title("Center Name")
-//                .snippet("This is my spot!"));
-//        locationMarker = mMap.addMarker(new MarkerOptions()
-//                .position(new LatLng(23.773112, 90.415992))
-//                .title("Police Plaza")
-//                .snippet("Demo EPI Center"));
 
         if (centerLocationList != null){
             for (CenterLocation centerLocation : centerLocationList){

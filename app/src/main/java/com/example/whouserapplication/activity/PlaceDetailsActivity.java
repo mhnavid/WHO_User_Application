@@ -114,6 +114,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
         setImage();
 
+        Log.d("centerID",String.valueOf(center.getCenterID()));
+
         String language = String.valueOf(LocaleManager.getLocale(getResources()));
         if (language.equals("en")){
             textCenterTitle.setText(center.getCenterName());
@@ -281,7 +283,10 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                         String[] imagePath = response.body().getImageLocation().split("/");
                         final String webPath = "http://18.140.146.240:9001/public/images/" + imagePath[imagePath.length-1];
 
-                        Picasso.get().load(webPath).into(centerImageView);
+                        Picasso.get().load(webPath)
+                                .placeholder(R.drawable.ic_image_black_24dp)
+                                .error(R.drawable.ic_image_black_24dp)
+                                .into(centerImageView);
                         progressDialog.dismiss();
                     }
                     else {
@@ -303,8 +308,10 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private String getWeekDay(String string){
         String language = String.valueOf(LocaleManager.getLocale(getResources()));
         StringBuilder weekDay = new StringBuilder();
+        Log.d("weekDay",String.valueOf(string));
         String[] splitStrings = string.split(",");
         for(int i=0; i<splitStrings.length; i++){
+
             if (splitStrings[i].length() == 2){
                 char[] chars = splitStrings[i].trim().toCharArray();
                 if (language.equals("en")) {

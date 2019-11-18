@@ -12,12 +12,12 @@
         android:layout_height="0dp"
         android:background="@color/whoColorWhite"
         android:contentDescription="Front Page"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_leading_page"
-        tools:srcCompat="@drawable/ic_leading_page" />
+        app:srcCompat="@drawable/ic_main_image"
+        tools:srcCompat="@drawable/ic_main_image" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

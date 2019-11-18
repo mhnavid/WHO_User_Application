@@ -4,7 +4,7 @@
 
     <string name="api_key">AIzaSyBFed-Oi6ZE5vSkbvsbN611YzKuuE4AR8Y</string>
 
-    <string name="btn_nearby_centers">Nearby Centers</string>
+    <string name="btn_refresh">Refresh</string>
     <string name="btn_call">কল</string>
     <string name="btn_direction">দিকনির্দেশনা</string>
     <string name="btn_submit">পাঠান</string>

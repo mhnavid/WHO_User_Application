@@ -1,4 +1,4 @@
-package com.example.whouserapplication;
+package com.example.whouserapplication.activity;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import com.example.whouserapplication.R;
 
 import java.util.Timer;
 import java.util.TimerTask;

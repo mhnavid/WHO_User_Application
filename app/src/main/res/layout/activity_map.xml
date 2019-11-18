@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapActivity">
+    tools:context=".activity.MapActivity">
 
     <fragment
         android:id="@+id/autocomplete_fragment"
@@ -39,7 +39,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btnNearbyCerterList"
+                android:id="@+id/btnRefresh"
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -48,7 +48,7 @@
                 android:background="@color/colorYellow"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:text="@string/btn_nearby_centers"
+                android:text="@string/btn_refresh"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="#FDFFFD"

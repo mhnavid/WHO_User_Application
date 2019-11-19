@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "744113401298",
+    "firebase_url": "https://who-user-application.firebaseio.com",
+    "project_id": "who-user-application",
+    "storage_bucket": "who-user-application.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:744113401298:android:eca599c74bf6a6a5d9ec0b",
+        "android_client_info": {
+          "package_name": "com.example.whouserapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "744113401298-aua465f7p14gfb4fm0g36vpdh21d2sur.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCs9U9yqa9O9gx90f9y-8lbGg2ludM3Gow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "744113401298-aua465f7p14gfb4fm0g36vpdh21d2sur.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

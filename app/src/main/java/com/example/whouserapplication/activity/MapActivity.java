@@ -1,23 +1,30 @@
 package com.example.whouserapplication.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.whouserapplication.LocaleManager;
 import com.example.whouserapplication.PermissionUtils;
@@ -28,6 +35,8 @@ import com.example.whouserapplication.model.Center;
 import com.example.whouserapplication.model.CenterDetails;
 import com.example.whouserapplication.model.CenterLocation;
 import com.example.whouserapplication.model.CurrentLocation;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -38,8 +47,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
@@ -60,13 +71,15 @@ public class MapActivity extends AppCompatActivity
         GoogleMap.OnMyLocationClickListener,
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMarkerClickListener,
-        ActivityCompat.OnRequestPermissionsResultCallback {
+        ActivityCompat.OnRequestPermissionsResultCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     AutocompleteSupportFragment autocompleteFragment;
     private Marker locationMarker;
     private Button btnRefresh;
+    private GoogleApiClient googleApiClient;
+    private Location mLastLocation;
 
     private static ApiInterface apiInterface;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -86,6 +99,16 @@ public class MapActivity extends AppCompatActivity
         getSupportActionBar().setTitle(R.string.app_name);
 
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+
+        isCheckLocationServiceisOn(MapActivity.this);
+
+        if(googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -138,7 +161,26 @@ public class MapActivity extends AppCompatActivity
         mMap.setOnMarkerClickListener(this);
         enableMyLocation();
 
-        moveMapToDeviceLocation();
+//        if (checkGpsEnable(getApplicationContext())){
+//            moveMapToDeviceLocation();
+//        }
+//        else {
+//            AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this);
+//            builder
+//                    .setMessage("Enable your GPS.")
+//                    .setCancelable(false)
+//                    .setPositiveButton("Enable", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            turnGPSOn();
+//
+//                        }
+//                    });
+//            AlertDialog alert = builder.create();
+//            alert.show();
+//            Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+//            pbutton.setBackgroundColor(Color.parseColor("#1fab89"));
+//        }
     }
 
     private void markLocationOnMap() {
@@ -400,5 +442,106 @@ public class MapActivity extends AppCompatActivity
                 Log.d("CenterList", "error");
             }
         });
+    }
+
+//    private boolean checkGpsEnable(Context context){
+//        boolean gpsEnabled = true;
+//        final LocationManager manager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE );
+//
+//        assert manager != null;
+//        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) )
+//            gpsEnabled = false;
+//        return gpsEnabled;
+//    }
+//
+//    private void turnGPSOn(){
+//        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//        startActivity(intent);
+//    }
+
+    public void isCheckLocationServiceisOn (final Context context) {
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }
+        catch(Exception ex) {}
+
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        }
+        catch(Exception ex) {}
+
+        if(!gps_enabled && !network_enabled) {
+            // notify user
+            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+            dialog.setMessage("Location Services Disabled. \n Please enable location services.");
+            dialog.setCancelable(false);
+
+            dialog.setPositiveButton("Enable", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    Intent myIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    context.startActivity(myIntent);
+                    //get gps
+                }
+            });
+
+            dialog.show();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        googleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        googleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isCheckLocationServiceisOn(MapActivity.this);
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if(googleApiClient.isConnected()) {
+            mFusedLocationProviderClient.getLastLocation()
+                    .addOnCompleteListener(this, new OnCompleteListener<Location>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Location> task) {
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                mLastLocation = task.getResult();
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                        new LatLng(mLastLocation.getLatitude(),
+                                                mLastLocation.getLongitude()), 15));
+                                currentLocation = new CurrentLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                                //updateUI();
+                            } else {
+//                                Log.e(TAG, "no location detected");
+//                                Log.w(TAG, "getLastLocation:exception", task.getException());
+                            }
+                        }
+                    });
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Toast.makeText(getApplicationContext(), "Connection Suspended", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast.makeText(getApplicationContext(), "Connection failed "+ connectionResult.toString(), Toast.LENGTH_LONG).show();
     }
 }

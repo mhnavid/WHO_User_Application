@@ -117,7 +117,35 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         Log.d("centerID",String.valueOf(center.getCenterID()));
 
         String language = String.valueOf(LocaleManager.getLocale(getResources()));
-        if (language.equals("en")){
+        if (language.equals("bn")) {
+            textCenterTitle.setText(center.getCenterNameBn());
+            textCenterLocation.setText(center.getCenterLocationBn());
+            if (center.getContactPersonContactNo().equals("")){
+                LinearLayout linearLayout = findViewById(R.id.contactPersonLayout);
+                linearLayout.setVisibility(View.INVISIBLE);
+            }
+            else {
+                contactPersonNameText.setText("যোগাযোগ ব্যক্তি");
+                contactPersonContactNoText.setText(center.getContactPersonContactNoBn());
+            }
+            if (center.getVaccinatorContactNo().equals("")){
+                LinearLayout contactVaccinatorLayout = findViewById(R.id.contactVaccinatorLayout);
+                contactVaccinatorLayout.setVisibility(View.INVISIBLE);
+            } else {
+                vaccinatorNameText.setText("টীকাদান কর্মী");
+                vaccinatorContactNoText.setText(center.getVaccinatorContactNoBn());
+            }
+            if (!center.getDaysNineToThree().equals("")){
+                textDaysNineToThree.setText(getWeekDay(center.getDaysNineToThree()));
+                textTimeNineToThree.setText("সকাল ৯টা থেকে দুপুর ৩টা");
+            }
+            if (!center.getDaysFiveToSeven().equals("")){
+                textDaysFiveToSeven.setText(getWeekDay(center.getDaysFiveToSeven()));
+                textTimeFiveToSeven.setText("বিকেল ৫টা থেকে সন্ধ্যা ৭টা");
+            }
+            textOrganization.setText(center.getOrganizedBn());
+        }
+        else {
             textCenterTitle.setText(center.getCenterName());
             textCenterLocation.setText(center.getCenterLocation());
             if (center.getContactPersonContactNo().equals("")){
@@ -146,34 +174,6 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 textTimeFiveToSeven.setText("05:00pm - 07:00pm");
             }
             textOrganization.setText(center.getOrganized());
-        }
-        else {
-            textCenterTitle.setText(center.getCenterNameBn());
-            textCenterLocation.setText(center.getCenterLocationBn());
-            if (center.getContactPersonContactNo().equals("")){
-                LinearLayout linearLayout = findViewById(R.id.contactPersonLayout);
-                linearLayout.setVisibility(View.INVISIBLE);
-            }
-            else {
-                contactPersonNameText.setText("যোগাযোগ ব্যক্তি");
-                contactPersonContactNoText.setText(center.getContactPersonContactNoBn());
-            }
-            if (center.getVaccinatorContactNo().equals("")){
-                LinearLayout contactVaccinatorLayout = findViewById(R.id.contactVaccinatorLayout);
-                contactVaccinatorLayout.setVisibility(View.INVISIBLE);
-            } else {
-                vaccinatorNameText.setText("টীকাদান কর্মী");
-                vaccinatorContactNoText.setText(center.getVaccinatorContactNoBn());
-            }
-            if (!center.getDaysNineToThree().equals("")){
-                textDaysNineToThree.setText(getWeekDay(center.getDaysNineToThree()));
-                textTimeNineToThree.setText("সকাল ৯টা থেকে দুপুর ৩টা");
-            }
-            if (!center.getDaysFiveToSeven().equals("")){
-                textDaysFiveToSeven.setText(getWeekDay(center.getDaysFiveToSeven()));
-                textTimeFiveToSeven.setText("বিকেল ৫টা থেকে সন্ধ্যা ৭টা");
-            }
-            textOrganization.setText(center.getOrganizedBn());
         }
 
         centerImageView.setOnClickListener(new View.OnClickListener() {
@@ -314,57 +314,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
             if (splitStrings[i].length() == 2){
                 char[] chars = splitStrings[i].trim().toCharArray();
-                if (language.equals("en")) {
-                    switch (chars[0]) {
-                        case '0':
-                            weekDay.append("Every ");
-                            break;
-                        case '1':
-                            weekDay.append("1st week ");
-                            break;
-                        case '2':
-                            weekDay.append("2nd week ");
-                            break;
-                        case '3':
-                            weekDay.append("3rd week ");
-                            break;
-                        case '4':
-                            weekDay.append("4th week ");
-                            break;
-                        case '5':
-                            weekDay.append("5th week ");
-                            break;
-                            default:
-                                break;
-                    }
-
-                    switch (chars[1]) {
-                        case '1':
-                            weekDay.append("Saturday, ");
-                            break;
-                        case '2':
-                            weekDay.append("Sunday, ");
-                            break;
-                        case '3':
-                            weekDay.append("Monday, ");
-                            break;
-                        case '4':
-                            weekDay.append("Tuesday, ");
-                            break;
-                        case '5':
-                            weekDay.append("Wednesday, ");
-                            break;
-                        case '6':
-                            weekDay.append("Thursday, ");
-                            break;
-                        case '7':
-                            weekDay.append("Friday, ");
-                            break;
-                            default:
-                                break;
-                    }
-                }
-                else {
+                if (language.equals("bn")) {
                     switch (chars[0]) {
                         case '0':
                             weekDay.append("প্রতি ");
@@ -412,6 +362,56 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                             break;
                             default:
                                 break;
+                    }
+                }
+                else {
+                    switch (chars[0]) {
+                        case '0':
+                            weekDay.append("Every ");
+                            break;
+                        case '1':
+                            weekDay.append("1st week ");
+                            break;
+                        case '2':
+                            weekDay.append("2nd week ");
+                            break;
+                        case '3':
+                            weekDay.append("3rd week ");
+                            break;
+                        case '4':
+                            weekDay.append("4th week ");
+                            break;
+                        case '5':
+                            weekDay.append("5th week ");
+                            break;
+                        default:
+                            break;
+                    }
+
+                    switch (chars[1]) {
+                        case '1':
+                            weekDay.append("Saturday, ");
+                            break;
+                        case '2':
+                            weekDay.append("Sunday, ");
+                            break;
+                        case '3':
+                            weekDay.append("Monday, ");
+                            break;
+                        case '4':
+                            weekDay.append("Tuesday, ");
+                            break;
+                        case '5':
+                            weekDay.append("Wednesday, ");
+                            break;
+                        case '6':
+                            weekDay.append("Thursday, ");
+                            break;
+                        case '7':
+                            weekDay.append("Friday, ");
+                            break;
+                        default:
+                            break;
                     }
                 }
             }

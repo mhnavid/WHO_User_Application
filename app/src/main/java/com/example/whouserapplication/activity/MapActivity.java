@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -90,6 +91,7 @@ public class MapActivity extends AppCompatActivity
     private List<CenterLocation> centerLocationList;
     private List<Center> centerList;
     private CurrentLocation currentLocation;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +101,11 @@ public class MapActivity extends AppCompatActivity
         getSupportActionBar().setTitle(R.string.app_name);
 
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
 
         isCheckLocationServiceisOn(MapActivity.this);
 
@@ -329,6 +336,7 @@ public class MapActivity extends AppCompatActivity
 
     private void getCenterDetailsList(){
 //        centerDetailsList = new ArrayList<>();
+        progressDialog.show();
         centerLocationList = new ArrayList<>();
         centerList = new ArrayList<>();
 
@@ -434,12 +442,14 @@ public class MapActivity extends AppCompatActivity
                     }
                     markLocationOnMap();
 //                    Log.d("centerList", String.valueOf(centerList));
+                    progressDialog.hide();
                 }
             }
 
             @Override
             public void onFailure(Call<List<CenterDetails>> call, Throwable t) {
-                Log.d("CenterList", "error");
+                progressDialog.hide();
+                Log.d("CenterList", "Server error");
             }
         });
     }
@@ -543,5 +553,30 @@ public class MapActivity extends AppCompatActivity
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(getApplicationContext(), "Connection failed "+ connectionResult.toString(), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder
+                .setMessage("Do you really want to close this app?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                        moveTaskToBack(true);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+        alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.parseColor("#1fab89"));
+        alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.parseColor("#d11a2a"));
     }
 }

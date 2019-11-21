@@ -7,8 +7,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -31,6 +34,11 @@ import com.example.whouserapplication.model.Center;
 import com.example.whouserapplication.model.ImageFind;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -136,12 +144,16 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 vaccinatorContactNoText.setText(center.getVaccinatorContactNoBn());
             }
             if (!center.getDaysNineToThree().equals("")){
-                textDaysNineToThree.setText(getWeekDay(center.getDaysNineToThree()));
-                textTimeNineToThree.setText("সকাল ৯টা থেকে দুপুর ৩টা");
+                if (!getWeekDay(center.getDaysNineToThree()).equals("")){
+                    textDaysNineToThree.setText(getWeekDay(center.getDaysNineToThree()));
+                    textTimeNineToThree.setText("সকাল ৯টা থেকে দুপুর ৩টা");
+                }
             }
             if (!center.getDaysFiveToSeven().equals("")){
-                textDaysFiveToSeven.setText(getWeekDay(center.getDaysFiveToSeven()));
-                textTimeFiveToSeven.setText("বিকেল ৫টা থেকে সন্ধ্যা ৭টা");
+                if (!getWeekDay(center.getDaysFiveToSeven()).equals("")){
+                    textDaysFiveToSeven.setText(getWeekDay(center.getDaysFiveToSeven()));
+                    textTimeFiveToSeven.setText("বিকেল ৫টা থেকে সন্ধ্যা ৭টা");
+                }
             }
             textOrganization.setText(center.getOrganizedBn());
         }
@@ -166,12 +178,16 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             }
 
             if (!center.getDaysNineToThree().equals("")){
-                textDaysNineToThree.setText(getWeekDay(center.getDaysNineToThree()));
-                textTimeNineToThree.setText("09:00am - 03:00pm");
+                if (!getWeekDay(center.getDaysNineToThree()).equals("")){
+                    textDaysNineToThree.setText(getWeekDay(center.getDaysNineToThree()));
+                    textTimeNineToThree.setText("09:00am - 03:00pm");
+                }
             }
             if (!center.getDaysFiveToSeven().equals("")){
-                textDaysFiveToSeven.setText(getWeekDay(center.getDaysFiveToSeven()));
-                textTimeFiveToSeven.setText("05:00pm - 07:00pm");
+                if (!getWeekDay(center.getDaysFiveToSeven()).equals("")){
+                    textDaysFiveToSeven.setText(getWeekDay(center.getDaysFiveToSeven()));
+                    textTimeFiveToSeven.setText("05:00pm - 07:00pm");
+                }
             }
             textOrganization.setText(center.getOrganized());
         }
@@ -271,6 +287,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void setImage(){
+
         progressDialog.show();
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("centerId", center.getCenterID());
@@ -279,6 +296,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ImageFind> call, Response<ImageFind> response) {
                 if (response.isSuccessful()){
+                    assert response.body() != null;
                     if (!response.body().getImageLocation().equals("") || response.body().getImageLocation() != null){
                         String[] imagePath = response.body().getImageLocation().split("/");
                         final String webPath = "http://18.140.146.240:9001/public/images/" + imagePath[imagePath.length-1];
@@ -294,7 +312,6 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                 }
-
             }
 
             @Override
@@ -308,12 +325,11 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private String getWeekDay(String string){
         String language = String.valueOf(LocaleManager.getLocale(getResources()));
         StringBuilder weekDay = new StringBuilder();
-        Log.d("weekDay",String.valueOf(string));
+        weekDay.append("");
         String[] splitStrings = string.split(",");
-        for(int i=0; i<splitStrings.length; i++){
-
-            if (splitStrings[i].length() == 2){
-                char[] chars = splitStrings[i].trim().toCharArray();
+        for (String splitString : splitStrings) {
+            if (splitString.length() == 2) {
+                char[] chars = splitString.trim().toCharArray();
                 if (language.equals("bn")) {
                     switch (chars[0]) {
                         case '0':
@@ -334,8 +350,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                         case '5':
                             weekDay.append("৫ম সপ্তাহের ");
                             break;
-                            default:
-                                break;
+                        default:
+                            break;
                     }
 
                     switch (chars[1]) {
@@ -360,11 +376,10 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                         case '7':
                             weekDay.append("শুক্রবার, ");
                             break;
-                            default:
-                                break;
+                        default:
+                            break;
                     }
-                }
-                else {
+                } else {
                     switch (chars[0]) {
                         case '0':
                             weekDay.append("Every ");
@@ -416,6 +431,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 }
             }
         }
+        Log.d("weekday", String.valueOf(weekDay));
         return String.valueOf(weekDay);
     }
 

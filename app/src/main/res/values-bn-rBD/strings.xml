@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ইপিআই টীকাদান কেন্দ্র</string>
+    <string name="app_name">ইপিআই টিকাদান কেন্দ্র</string>
 
     <string name="api_key">AIzaSyBFed-Oi6ZE5vSkbvsbN611YzKuuE4AR8Y</string>
 
@@ -9,7 +9,7 @@
     <string name="btn_direction">দিকনির্দেশনা</string>
     <string name="btn_submit">পাঠান</string>
 
-    <string name="text_days">দিন</string>
+    <string name="text_days">টিকাদানের দিন</string>
     <string name="text_time">সময়</string>
     <string name="text_organized_by">বাস্তবায়নে</string>
     <string name="text_comments">মতামত</string>

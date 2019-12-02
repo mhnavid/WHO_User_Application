@@ -236,6 +236,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_language, menu);
+        MenuItem item = menu.findItem(R.id.btnLoad);
+        item.setVisible(false);
         return true;
     }
 
@@ -295,7 +297,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         call.enqueue(new Callback<ImageFind>() {
             @Override
             public void onResponse(Call<ImageFind> call, Response<ImageFind> response) {
-                if (response.isSuccessful()){
+                if (response.code() == 200){
                     assert response.body() != null;
                     if (!response.body().getImageLocation().equals("") || response.body().getImageLocation() != null){
                         String[] imagePath = response.body().getImageLocation().split("/");
@@ -452,7 +454,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.d("comment", String.valueOf(response.body()));
-                if (response.isSuccessful()){
+                if (response.code() == 200){
                     progressDialog.dismiss();
                     commentText.setText("Thanks for your feedback.");
                     commentText.setInputType(InputType.TYPE_NULL);

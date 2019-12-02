@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/btnLoad"
+        android:icon="@drawable/ic_refresh_black_24dp"
+        app:showAsAction="always"
+        android:title="Reload">
+    </item>
     <item
         android:id="@+id/btnLanguage"
         android:icon="@drawable/ic_language_black_24dp"

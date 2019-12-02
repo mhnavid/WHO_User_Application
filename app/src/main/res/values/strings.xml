@@ -7,7 +7,7 @@
     <string name="btn_direction">Direction</string>
     <string name="btn_submit">Submit</string>
 
-    <string name="text_days">Days</string>
+    <string name="text_days">Vaccination Days</string>
     <string name="text_time">Time</string>
     <string name="text_organized_by">Organized by</string>
     <string name="text_comments">Comments</string>

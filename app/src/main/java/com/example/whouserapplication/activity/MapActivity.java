@@ -125,7 +125,7 @@ public class MapActivity extends AppCompatActivity
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-        btnRefresh = findViewById(R.id.btnRefresh);
+//        btnRefresh = findViewById(R.id.btnRefresh);
 
         if (!Places.isInitialized()) {
             Places.initialize(getApplicationContext(), getString(R.string.api_key));
@@ -139,6 +139,7 @@ public class MapActivity extends AppCompatActivity
             public void onPlaceSelected(@NonNull Place place) {
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                         place.getLatLng(), 16));
+                progressDialog.dismiss();
             }
 
             @Override
@@ -150,13 +151,12 @@ public class MapActivity extends AppCompatActivity
         assert mapFragment != null;
         mapFragment.getMapAsync( this);
 
-        btnRefresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-                startActivity(getIntent());
-            }
-        });
+//        btnRefresh.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
     }
 
     @Override
@@ -257,27 +257,27 @@ public class MapActivity extends AppCompatActivity
         PermissionUtils.PermissionDeniedDialog
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
     }
-
-    private void moveMapToDeviceLocation() {
-
-        mFusedLocationProviderClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                new LatLng(location.getLatitude(),
-                                        location.getLongitude()), 15));
-                        currentLocation = new CurrentLocation(location.getLatitude(), location.getLongitude());
-
-                    }
-                })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                    }
-                });
-    }
+//
+//    private void moveMapToDeviceLocation() {
+//
+//        mFusedLocationProviderClient.getLastLocation()
+//                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+//                    @Override
+//                    public void onSuccess(Location location) {
+//                        // Got last known location. In some rare situations this can be null.
+//                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+//                                new LatLng(location.getLatitude(),
+//                                        location.getLongitude()), 15));
+//                        currentLocation = new CurrentLocation(location.getLatitude(), location.getLongitude());
+//
+//                    }
+//                })
+//                .addOnFailureListener(this, new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                    }
+//                });
+//    }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
@@ -312,6 +312,9 @@ public class MapActivity extends AppCompatActivity
                 setNewLocale(this, LocaleManager.BENGALI);
                 Log.d("bengali",String.valueOf(LocaleManager.getLocale(getResources())));
                 return true;
+            case R.id.btnLoad:
+                getCenterDetailsList();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -344,7 +347,7 @@ public class MapActivity extends AppCompatActivity
         call.enqueue(new Callback<List<CenterDetails>>() {
             @Override
             public void onResponse(Call<List<CenterDetails>> call, Response<List<CenterDetails>> response) {
-                if (response.isSuccessful()){
+                if (response.code() == 200){
                     for (CenterDetails centerDetails : response.body()){
 //                        Log.d("contacts", String.valueOf(centerDetails.getContacts().get(0).getContactMobileNumber()));
 

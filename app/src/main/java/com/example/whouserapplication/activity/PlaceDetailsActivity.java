@@ -4,8 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +16,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -32,11 +36,15 @@ import com.example.whouserapplication.api.ApiClient;
 import com.example.whouserapplication.api.ApiInterface;
 import com.example.whouserapplication.model.Center;
 import com.example.whouserapplication.model.ImageFind;
+import com.example.whouserapplication.model.LastLocation;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -51,13 +59,14 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     TextView textCenterTitle, textCenterLocation, contactPersonNameText, contactPersonContactNoText,
             textDaysNineToThree, textTimeNineToThree, textDaysFiveToSeven, textTimeFiveToSeven,
             textOrganization, commentText, vaccinatorNameText, vaccinatorContactNoText;
-    Button btnContactCall, btnDirection, btnVaccinatorCall, btnComment;
+    Button btnContactCall, btnDirection, btnVaccinatorCall, btnComment, btnEPISchedule;
 
     private static ApiInterface apiInterface;
     private Center center;
     private ProgressDialog progressDialog;
     private ImagePopup imagePopup;
     private String currentLatLong, directionLatLong;
+    String lastLat, lastlong;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +85,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         directionLatLong = center.getCenterLatitude()
                 + "," + center.getCenterLongitude();
 
+        lastLat = intent.getStringExtra("lastLat");
+        lastlong = intent.getStringExtra("lastLong");
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -108,6 +119,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         vaccinatorContactNoText = findViewById(R.id.vaccinatorContactNoText);
         btnVaccinatorCall = findViewById(R.id.btnVaccinatorCall);
         btnComment = findViewById(R.id.btnComment);
+        btnEPISchedule = findViewById(R.id.btnEPISchedule);
 
         centerImageView.setImageResource(R.drawable.ic_image_black_24dp);
 
@@ -229,6 +241,13 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 } else {
                     sendCommentToServer();
                 }
+            }
+        });
+
+        btnEPISchedule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPDF();
             }
         });
     }
@@ -437,12 +456,6 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         return String.valueOf(weekDay);
     }
 
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(PlaceDetailsActivity.this, MapActivity.class);
-        startActivity(intent);
-    }
-
     private void sendCommentToServer(){
         progressDialog.show();
         JsonObject jsonObject = new JsonObject();
@@ -471,5 +484,18 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void viewPDF(){
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://drive.google.com/file/d/1nCACNGBbMungjwH2zn9s0enFHX67U-cr/view?usp=sharing"));
+        startActivity(browserIntent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(PlaceDetailsActivity.this, MapActivity.class);
+        intent.putExtra("lastLat", lastLat);
+        intent.putExtra("lastLong", lastlong);
+        startActivity(intent);
     }
 }

@@ -36,6 +36,7 @@ import com.example.whouserapplication.model.Center;
 import com.example.whouserapplication.model.CenterDetails;
 import com.example.whouserapplication.model.CenterLocation;
 import com.example.whouserapplication.model.CurrentLocation;
+import com.example.whouserapplication.model.LastLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -81,6 +82,7 @@ public class MapActivity extends AppCompatActivity
     private Button btnRefresh;
     private GoogleApiClient googleApiClient;
     private Location mLastLocation;
+    private LastLocation lastLocation;
 
     private static ApiInterface apiInterface;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -92,6 +94,8 @@ public class MapActivity extends AppCompatActivity
     private List<Center> centerList;
     private CurrentLocation currentLocation;
     private ProgressDialog progressDialog;
+
+    private Double savedLat, savedLong = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +110,13 @@ public class MapActivity extends AppCompatActivity
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setMessage("Loading...");
         progressDialog.setCancelable(false);
+
+        Intent intent = getIntent();
+        if (intent.getExtras() != null){
+            savedLat = Double.parseDouble(intent.getStringExtra("lastLat"));
+            savedLong = Double.parseDouble(intent.getStringExtra("lastLong"));
+
+        }
 
         isCheckLocationServiceisOn(MapActivity.this);
 
@@ -139,6 +150,7 @@ public class MapActivity extends AppCompatActivity
             public void onPlaceSelected(@NonNull Place place) {
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                         place.getLatLng(), 16));
+                lastLocation = new LastLocation(place.getLatLng().latitude, place.getLatLng().longitude);
                 progressDialog.dismiss();
             }
 
@@ -289,6 +301,9 @@ public class MapActivity extends AppCompatActivity
                     intent.putExtras(bundle);
                     intent.putExtra("currentLat", String.valueOf(currentLocation.getLatitude()));
                     intent.putExtra("currentLong", String.valueOf(currentLocation.getLongitude()));
+                    intent.putExtra("lastLat", String.valueOf(lastLocation.getLastLat()));
+                    intent.putExtra("lastLong", String.valueOf(lastLocation.getLastLong()));
+                    Log.d("lastLat", String.valueOf(lastLocation.getLastLat()));
                     startActivity(intent);
                 }
             }
@@ -533,11 +548,21 @@ public class MapActivity extends AppCompatActivity
                         @Override
                         public void onComplete(@NonNull Task<Location> task) {
                             if (task.isSuccessful() && task.getResult() != null) {
-                                mLastLocation = task.getResult();
-                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(mLastLocation.getLatitude(),
-                                                mLastLocation.getLongitude()), 15));
-                                currentLocation = new CurrentLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                                if (savedLat != null && savedLong != null){
+                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                            new LatLng(savedLat,
+                                                    savedLong), 15));
+                                    currentLocation = new CurrentLocation(savedLat, savedLong);
+                                    lastLocation = new LastLocation(savedLat, savedLong);
+                                }
+                                else {
+                                    mLastLocation = task.getResult();
+                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                            new LatLng(mLastLocation.getLatitude(),
+                                                    mLastLocation.getLongitude()), 15));
+                                    currentLocation = new CurrentLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                                    lastLocation = new LastLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                                }
                                 //updateUI();
                             } else {
 //                                Log.e(TAG, "no location detected");

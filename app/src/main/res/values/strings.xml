@@ -6,6 +6,7 @@
     <string name="btn_call">Call</string>
     <string name="btn_direction">Direction</string>
     <string name="btn_submit">Submit</string>
+    <string name="btn_epi_schedule">EPI Vaccination Schedule</string>
 
     <string name="text_days">Vaccination Days</string>
     <string name="text_time">Time</string>

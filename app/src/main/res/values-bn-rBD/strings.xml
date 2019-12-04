@@ -8,6 +8,7 @@
     <string name="btn_call">কল</string>
     <string name="btn_direction">দিকনির্দেশনা</string>
     <string name="btn_submit">পাঠান</string>
+    <string name="btn_epi_schedule">ইপিআই টিকাদানের সময়সূচী</string>
 
     <string name="text_days">টিকাদানের দিন</string>
     <string name="text_time">সময়</string>

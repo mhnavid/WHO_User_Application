@@ -499,6 +499,24 @@
             android:layout_marginTop="12dp"
             android:orientation="vertical">
 
+
+            <Button
+                android:id="@+id/btnEPISchedule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/colorYellow"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:text="@string/btn_epi_schedule" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

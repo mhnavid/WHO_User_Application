@@ -12,4 +12,6 @@
     <string name="text_time">Time</string>
     <string name="text_organized_by">Organized by</string>
     <string name="text_comments">Comments</string>
+
+    <string name="response_comments">Thanks for your comment.</string>
 </resources>

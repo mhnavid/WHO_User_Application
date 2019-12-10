@@ -14,4 +14,6 @@
     <string name="text_time">সময়</string>
     <string name="text_organized_by">বাস্তবায়নে</string>
     <string name="text_comments">মতামত</string>
+
+    <string name="response_comments">আপনার মতামতের জন্য ধন্যবাদ।</string>
 </resources>

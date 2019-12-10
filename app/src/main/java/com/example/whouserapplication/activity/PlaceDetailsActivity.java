@@ -4,19 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -36,17 +29,10 @@ import com.example.whouserapplication.api.ApiClient;
 import com.example.whouserapplication.api.ApiInterface;
 import com.example.whouserapplication.model.Center;
 import com.example.whouserapplication.model.ImageFind;
-import com.example.whouserapplication.model.LastLocation;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.Objects;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -73,13 +59,13 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_details);
 
-        getSupportActionBar().setTitle(R.string.app_name);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.app_name);
 
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        center = (Center) bundle.getSerializable("center");
+        center = (Center) Objects.requireNonNull(bundle).getSerializable("center");
         currentLatLong = intent.getStringExtra("currentLat")
                 + "," + intent.getStringExtra("currentLong");
         directionLatLong = center.getCenterLatitude()
@@ -315,7 +301,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         Call<ImageFind> call = apiInterface.findImage(jsonObject);
         call.enqueue(new Callback<ImageFind>() {
             @Override
-            public void onResponse(Call<ImageFind> call, Response<ImageFind> response) {
+            public void onResponse(@NonNull Call<ImageFind> call, @NonNull Response<ImageFind> response) {
                 if (response.code() == 200){
                     assert response.body() != null;
                     if (!response.body().getImageLocation().equals("") || response.body().getImageLocation() != null){
@@ -336,7 +322,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ImageFind> call, Throwable t) {
+            public void onFailure(@NonNull Call<ImageFind> call,@NonNull Throwable t) {
                 centerImageView.setImageResource(R.drawable.ic_image_black_24dp);
                 progressDialog.dismiss();
             }
@@ -465,11 +451,11 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         Call<ResponseBody> call = apiInterface.sendFeedBack(jsonObject);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 Log.d("comment", String.valueOf(response.body()));
                 if (response.code() == 200){
                     progressDialog.dismiss();
-                    commentText.setText("Thanks for your feedback.");
+                    commentText.setText(R.string.response_comments);
                     commentText.setInputType(InputType.TYPE_NULL);
                     btnComment.setVisibility(View.INVISIBLE);
                 }
@@ -480,14 +466,15 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
 
             }
         });
     }
 
     private void viewPDF(){
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://drive.google.com/file/d/1nCACNGBbMungjwH2zn9s0enFHX67U-cr/view?usp=sharing"));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://drive.google.com/file/d/1IyHWOPf1Kiod-4rOIJzvscdJh4MiVZTL/view?usp=sharing"));
         startActivity(browserIntent);
     }
 

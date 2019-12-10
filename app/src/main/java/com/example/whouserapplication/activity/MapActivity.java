@@ -18,13 +18,9 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.whouserapplication.LocaleManager;
@@ -50,18 +46,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -78,8 +72,6 @@ public class MapActivity extends AppCompatActivity
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     AutocompleteSupportFragment autocompleteFragment;
-    private Marker locationMarker;
-    private Button btnRefresh;
     private GoogleApiClient googleApiClient;
     private Location mLastLocation;
     private LastLocation lastLocation;
@@ -87,9 +79,7 @@ public class MapActivity extends AppCompatActivity
     private static ApiInterface apiInterface;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private boolean mPermissionDenied = false;
-    int AUTOCOMPLETE_REQUEST_CODE = 1;
 
-    private List<CenterDetails> centerDetailsList;
     private List<CenterLocation> centerLocationList;
     private List<Center> centerList;
     private CurrentLocation currentLocation;
@@ -102,7 +92,7 @@ public class MapActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        getSupportActionBar().setTitle(R.string.app_name);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.app_name);
 
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
@@ -113,9 +103,10 @@ public class MapActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         if (intent.getExtras() != null){
-            savedLat = Double.parseDouble(intent.getStringExtra("lastLat"));
-            savedLong = Double.parseDouble(intent.getStringExtra("lastLong"));
-
+            if (intent.hasExtra("lastLat") && intent.hasExtra("lastLong")){
+                savedLat = Double.parseDouble(Objects.requireNonNull(intent.getStringExtra("lastLat")));
+                savedLong = Double.parseDouble(Objects.requireNonNull(intent.getStringExtra("lastLong")));
+            }
         }
 
         isCheckLocationServiceisOn(MapActivity.this);
@@ -142,7 +133,7 @@ public class MapActivity extends AppCompatActivity
             Places.initialize(getApplicationContext(), getString(R.string.api_key));
         }
 
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.LAT_LNG));
+        autocompleteFragment.setPlaceFields(Collections.singletonList(Place.Field.LAT_LNG));
         autocompleteFragment.setCountry("BD");
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -150,7 +141,7 @@ public class MapActivity extends AppCompatActivity
             public void onPlaceSelected(@NonNull Place place) {
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                         place.getLatLng(), 16));
-                lastLocation = new LastLocation(place.getLatLng().latitude, place.getLatLng().longitude);
+                lastLocation = new LastLocation(Objects.requireNonNull(place.getLatLng()).latitude, place.getLatLng().longitude);
                 progressDialog.dismiss();
             }
 
@@ -361,8 +352,9 @@ public class MapActivity extends AppCompatActivity
         Call<List<CenterDetails>> call = apiInterface.getAllCenter();
         call.enqueue(new Callback<List<CenterDetails>>() {
             @Override
-            public void onResponse(Call<List<CenterDetails>> call, Response<List<CenterDetails>> response) {
+            public void onResponse(@NonNull Call<List<CenterDetails>> call, @NonNull Response<List<CenterDetails>> response) {
                 if (response.code() == 200){
+                    assert response.body() != null;
                     for (CenterDetails centerDetails : response.body()){
 //                        Log.d("contacts", String.valueOf(centerDetails.getContacts().get(0).getContactMobileNumber()));
 
@@ -465,7 +457,7 @@ public class MapActivity extends AppCompatActivity
             }
 
             @Override
-            public void onFailure(Call<List<CenterDetails>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<CenterDetails>> call, @NonNull Throwable t) {
                 progressDialog.hide();
                 Log.d("CenterList", "Server error");
             }
@@ -494,14 +486,14 @@ public class MapActivity extends AppCompatActivity
         boolean network_enabled = false;
 
         try {
-            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            gps_enabled = Objects.requireNonNull(lm).isProviderEnabled(LocationManager.GPS_PROVIDER);
         }
-        catch(Exception ex) {}
+        catch(Exception ignored) {}
 
         try {
-            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            network_enabled = Objects.requireNonNull(lm).isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         }
-        catch(Exception ex) {}
+        catch(Exception ignored) {}
 
         if(!gps_enabled && !network_enabled) {
             // notify user
@@ -565,6 +557,7 @@ public class MapActivity extends AppCompatActivity
                                 }
                                 //updateUI();
                             } else {
+                                Toast.makeText(getApplicationContext(), "no location detected", Toast.LENGTH_LONG).show();
 //                                Log.e(TAG, "no location detected");
 //                                Log.w(TAG, "getLastLocation:exception", task.getException());
                             }

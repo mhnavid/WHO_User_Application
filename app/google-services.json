@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:744113401298:android:eca599c74bf6a6a5d9ec0b",
         "android_client_info": {
-          "package_name": "com.example.whouserapplication"
+          "package_name": "nvd.headblocks.whouserapplication"
         }
       },
       "oauth_client": [

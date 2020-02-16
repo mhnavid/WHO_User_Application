@@ -17,6 +17,8 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -122,7 +124,12 @@ public class MapActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
-        getCenterDetailsList();
+        if (haveNetworkConnection(MapActivity.this)){
+            getCenterDetailsList();
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Internet is not available.", Toast.LENGTH_LONG).show();
+        }
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         autocompleteFragment = (AutocompleteSupportFragment)
@@ -142,7 +149,7 @@ public class MapActivity extends AppCompatActivity
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                         place.getLatLng(), 16));
                 lastLocation = new LastLocation(Objects.requireNonNull(place.getLatLng()).latitude, place.getLatLng().longitude);
-                progressDialog.dismiss();
+                progressDialog.hide();
             }
 
             @Override
@@ -284,6 +291,7 @@ public class MapActivity extends AppCompatActivity
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        if (haveNetworkConnection(MapActivity.this)){
             for (Center center : centerList){
                 if (center.getCenterName().equals(marker.getTitle())){
                     Bundle bundle = new Bundle();
@@ -298,6 +306,10 @@ public class MapActivity extends AppCompatActivity
                     startActivity(intent);
                 }
             }
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Internet is not available.", Toast.LENGTH_LONG).show();
+        }
         return true;
     }
 
@@ -319,7 +331,12 @@ public class MapActivity extends AppCompatActivity
                 Log.d("bengali",String.valueOf(LocaleManager.getLocale(getResources())));
                 return true;
             case R.id.btnLoad:
-                getCenterDetailsList();
+                if (haveNetworkConnection(MapActivity.this)){
+                    getCenterDetailsList();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "Internet is not available.", Toast.LENGTH_LONG).show();
+                }
                 return true;
         }
 
@@ -558,8 +575,7 @@ public class MapActivity extends AppCompatActivity
                                 //updateUI();
                             } else {
                                 Toast.makeText(getApplicationContext(), "no location detected", Toast.LENGTH_LONG).show();
-//                                Log.e(TAG, "no location detected");
-//                                Log.w(TAG, "getLastLocation:exception", task.getException());
+                                progressDialog.hide();
                             }
                         }
                     });
@@ -599,5 +615,41 @@ public class MapActivity extends AppCompatActivity
         alert.show();
         alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.parseColor("#1fab89"));
         alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.parseColor("#d11a2a"));
+    }
+
+    private boolean haveNetworkConnection(Context context)
+    {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo)
+        {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+            {
+                if (ni.isConnected())
+                {
+                    haveConnectedWifi = true;
+                    Log.v("WIFI CONNECTION ", "AVAILABLE");
+                } else
+                {
+                    Log.v("WIFI CONNECTION ", "NOT AVAILABLE");
+                }
+            }
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+            {
+                if (ni.isConnected())
+                {
+                    haveConnectedMobile = true;
+                    Log.v("MOBILE CONNECTION ", "AVAILABLE");
+                } else
+                {
+                    Log.v("MOBILE CONNECTION ", "NOT AVAILABLE");
+                }
+            }
+        }
+        return haveConnectedWifi || haveConnectedMobile;
     }
 }

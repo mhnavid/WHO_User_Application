@@ -290,6 +290,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private void openGoogleMap(String currentLatLong, String directionLatLong){
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                 Uri.parse("https://www.google.com/maps/dir/?api=1&destination="+directionLatLong));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getApplicationContext().startActivity(intent);
     }
 
@@ -472,7 +473,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void viewPDF(){
-        Uri webpage = Uri.parse("https://drive.google.com/file/d/1u6XNgkSTY7n4reonadLxd3jW3IU4_kT9/view?usp=sharing");
+        Uri webpage = Uri.parse("http://103.247.238.51:9115/public/images/EPI_Vaccination_Schedule2020.pdf");
         Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);

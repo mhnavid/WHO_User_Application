@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">EPI Vaccination Center</string>
-    <string name="api_key">AIzaSyBFed-Oi6ZE5vSkbvsbN611YzKuuE4AR8Y</string>
+    <string name="api_key">AIzaSyB26Rn7H8rWR9NQFSplG3nWphaM4Kl8sLs</string>
 
     <string name="btn_refresh">Refresh</string>
     <string name="btn_call">Call</string>

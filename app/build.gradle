@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 33
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "nvd.headblocks.whouserapplication"
         minSdkVersion 21
-        targetSdkVersion 29
-        versionCode 7
-        versionName "1.0"
+        targetSdkVersion 33
+        versionCode 11
+        versionName "2.11"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

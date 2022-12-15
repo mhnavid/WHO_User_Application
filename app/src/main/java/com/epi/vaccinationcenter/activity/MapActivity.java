@@ -69,7 +69,9 @@ public class MapActivity extends AppCompatActivity
         GoogleMap.OnMyLocationClickListener,
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMarkerClickListener,
-        ActivityCompat.OnRequestPermissionsResultCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        ActivityCompat.OnRequestPermissionsResultCallback,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -104,8 +106,8 @@ public class MapActivity extends AppCompatActivity
         progressDialog.setCancelable(false);
 
         Intent intent = getIntent();
-        if (intent.getExtras() != null){
-            if (intent.hasExtra("lastLat") && intent.hasExtra("lastLong")){
+        if (intent.getExtras() != null) {
+            if (intent.hasExtra("lastLat") && intent.hasExtra("lastLong")) {
                 savedLat = Double.parseDouble(Objects.requireNonNull(intent.getStringExtra("lastLat")));
                 savedLong = Double.parseDouble(Objects.requireNonNull(intent.getStringExtra("lastLong")));
             }
@@ -113,7 +115,7 @@ public class MapActivity extends AppCompatActivity
 
         isCheckLocationServiceisOn(MapActivity.this);
 
-        if(googleApiClient == null) {
+        if (googleApiClient == null) {
             googleApiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
@@ -124,10 +126,9 @@ public class MapActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
-        if (haveNetworkConnection(MapActivity.this)){
+        if (haveNetworkConnection(MapActivity.this)) {
             getCenterDetailsList();
-        }
-        else {
+        } else {
             Toast.makeText(getApplicationContext(), "Internet is not available.", Toast.LENGTH_LONG).show();
         }
 
@@ -159,7 +160,7 @@ public class MapActivity extends AppCompatActivity
         });
 
         assert mapFragment != null;
-        mapFragment.getMapAsync( this);
+        mapFragment.getMapAsync(this);
 
 //        btnRefresh.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -202,8 +203,8 @@ public class MapActivity extends AppCompatActivity
 
     private void markLocationOnMap() {
 
-        if (centerLocationList != null){
-            for (CenterLocation centerLocation : centerLocationList){
+        if (centerLocationList != null) {
+            for (CenterLocation centerLocation : centerLocationList) {
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(centerLocation.getLatitude(), centerLocation.getLongitude()))
                         .title(centerLocation.getCenterName()));
@@ -291,11 +292,11 @@ public class MapActivity extends AppCompatActivity
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        if (haveNetworkConnection(MapActivity.this)){
-            for (Center center : centerList){
-                if (center.getCenterName().equals(marker.getTitle())){
+        if (haveNetworkConnection(MapActivity.this)) {
+            for (Center center : centerList) {
+                if (center.getCenterName().equals(marker.getTitle())) {
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("center",  center);
+                    bundle.putSerializable("center", center);
                     Intent intent = new Intent(MapActivity.this, PlaceDetailsActivity.class);
                     intent.putExtras(bundle);
                     intent.putExtra("currentLat", String.valueOf(currentLocation.getLatitude()));
@@ -306,8 +307,7 @@ public class MapActivity extends AppCompatActivity
                     startActivity(intent);
                 }
             }
-        }
-        else {
+        } else {
             Toast.makeText(getApplicationContext(), "Internet is not available.", Toast.LENGTH_LONG).show();
         }
         return true;
@@ -328,13 +328,12 @@ public class MapActivity extends AppCompatActivity
                 return true;
             case R.id.local_Bengali:
                 setNewLocale(this, LocaleManager.BENGALI);
-                Log.d("bengali",String.valueOf(LocaleManager.getLocale(getResources())));
+                Log.d("bengali", String.valueOf(LocaleManager.getLocale(getResources())));
                 return true;
             case R.id.btnLoad:
-                if (haveNetworkConnection(MapActivity.this)){
+                if (haveNetworkConnection(MapActivity.this)) {
                     getCenterDetailsList();
-                }
-                else {
+                } else {
                     Toast.makeText(getApplicationContext(), "Internet is not available.", Toast.LENGTH_LONG).show();
                 }
                 return true;
@@ -360,7 +359,7 @@ public class MapActivity extends AppCompatActivity
         startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
-    private void getCenterDetailsList(){
+    private void getCenterDetailsList() {
 //        centerDetailsList = new ArrayList<>();
         progressDialog.show();
         centerLocationList = new ArrayList<>();
@@ -370,97 +369,122 @@ public class MapActivity extends AppCompatActivity
         call.enqueue(new Callback<List<CenterDetails>>() {
             @Override
             public void onResponse(@NonNull Call<List<CenterDetails>> call, @NonNull Response<List<CenterDetails>> response) {
-                if (response.code() == 200){
+                if (response.code() == 200) {
                     assert response.body() != null;
-                    for (CenterDetails centerDetails : response.body()){
+                    for (CenterDetails centerDetails : response.body()) {
 //                        Log.d("contacts", String.valueOf(centerDetails.getContacts().get(0).getContactMobileNumber()));
 
 //                        __________________________ADDRESS CHECK_________________________________
 
                         String address, addressBn;
+
                         if (!centerDetails.getVcHouseName().equals("") && !centerDetails.getVcHouseNumber().equals("")
-                                && !centerDetails.getVcRoadName().equals("")){
-                            address = "("+centerDetails.getVcHouseName()+")"+centerDetails.getVcHouseNumber()+", "+centerDetails.getVcRoadName();
-                        }
-                        else if (centerDetails.getVcHouseName().equals("") && !centerDetails.getVcHouseNumber().equals("")
-                                && !centerDetails.getVcRoadName().equals("")){
-                            address = centerDetails.getVcHouseNumber()+", "+centerDetails.getVcRoadName();
-                        }
-                        else if (centerDetails.getVcHouseName().equals("") && centerDetails.getVcHouseNumber().equals("")
-                                && !centerDetails.getVcRoadName().equals("")){
+                                && !centerDetails.getVcRoadName().equals("")) {
+                            address = "(" + centerDetails.getVcHouseName() + ")" + centerDetails.getVcHouseNumber() + ", " + centerDetails.getVcRoadName();
+                        } else if (centerDetails.getVcHouseName().equals("") && !centerDetails.getVcHouseNumber().equals("")
+                                && !centerDetails.getVcRoadName().equals("")) {
+                            address = centerDetails.getVcHouseNumber() + ", " + centerDetails.getVcRoadName();
+                        } else if (centerDetails.getVcHouseName().equals("") && centerDetails.getVcHouseNumber().equals("")
+                                && !centerDetails.getVcRoadName().equals("")) {
                             address = centerDetails.getVcRoadName();
-                        }
-                        else if (!centerDetails.getVcHouseName().equals("") && centerDetails.getVcHouseNumber().equals("")
-                                && !centerDetails.getVcRoadName().equals("")){
-                            address = "("+centerDetails.getVcHouseName()+")"+", "+centerDetails.getVcRoadName();
-                        }
-                        else {
-                            address = centerDetails.getVcHouseNumber()+", "+centerDetails.getVcRoadName();
+                        } else if (!centerDetails.getVcHouseName().equals("") && centerDetails.getVcHouseNumber().equals("")
+                                && !centerDetails.getVcRoadName().equals("")) {
+                            address = "(" + centerDetails.getVcHouseName() + ")" + ", " + centerDetails.getVcRoadName();
+                        } else {
+                            address = centerDetails.getVcHouseNumber() + ", " + centerDetails.getVcRoadName();
                         }
                         if (!centerDetails.getVcHouseNameBn().equals("") && !centerDetails.getVcHouseNumberBn().equals("")
-                                && !centerDetails.getVcRoadNameBn().equals("")){
-                            addressBn = "("+centerDetails.getVcHouseNameBn()+")"+centerDetails.getVcHouseNumberBn()+", "+centerDetails.getVcRoadNameBn();
-                        }
-                        else if (centerDetails.getVcHouseNameBn().equals("") && !centerDetails.getVcHouseNumberBn().equals("")
-                                && !centerDetails.getVcRoadNameBn().equals("")){
-                            addressBn = centerDetails.getVcHouseNumberBn()+", "+centerDetails.getVcRoadNameBn();
-                        }
-                        else if (centerDetails.getVcHouseNameBn().equals("") && centerDetails.getVcHouseNumberBn().equals("")
-                                && !centerDetails.getVcRoadNameBn().equals("")){
+                                && !centerDetails.getVcRoadNameBn().equals("")) {
+                            addressBn = "(" + centerDetails.getVcHouseNameBn() + ")" + centerDetails.getVcHouseNumberBn() + ", " + centerDetails.getVcRoadNameBn();
+                        } else if (centerDetails.getVcHouseNameBn().equals("") && !centerDetails.getVcHouseNumberBn().equals("")
+                                && !centerDetails.getVcRoadNameBn().equals("")) {
+                            addressBn = centerDetails.getVcHouseNumberBn() + ", " + centerDetails.getVcRoadNameBn();
+                        } else if (centerDetails.getVcHouseNameBn().equals("") && centerDetails.getVcHouseNumberBn().equals("")
+                                && !centerDetails.getVcRoadNameBn().equals("")) {
                             addressBn = centerDetails.getVcRoadNameBn();
-                        }
-                        else if (!centerDetails.getVcHouseNameBn().equals("") && centerDetails.getVcHouseNumberBn().equals("")
-                                && !centerDetails.getVcRoadNameBn().equals("")){
-                            addressBn = "("+centerDetails.getVcHouseNameBn()+")"+", "+centerDetails.getVcRoadNameBn();
-                        }
-                        else {
-                            addressBn = centerDetails.getVcHouseNumberBn()+", "+centerDetails.getVcRoadNameBn();
+                        } else if (!centerDetails.getVcHouseNameBn().equals("") && centerDetails.getVcHouseNumberBn().equals("")
+                                && !centerDetails.getVcRoadNameBn().equals("")) {
+                            addressBn = "(" + centerDetails.getVcHouseNameBn() + ")" + ", " + centerDetails.getVcRoadNameBn();
+                        } else {
+                            addressBn = centerDetails.getVcHouseNumberBn() + ", " + centerDetails.getVcRoadNameBn();
                         }
 
 //                        _______________________VACCINATOR CONTACT NO CHECK______________________________
                         String vaccinatorContactNo, vaccinatorContactNoBn;
-                        if (centerDetails.getContacts().get(centerDetails.getContacts().size()-1).getVaccinatorMobileNumber().length() == 11){
-                            vaccinatorContactNo = centerDetails.getContacts().get(centerDetails.getContacts().size()-1).getVaccinatorMobileNumber();
-                        } else{
-                            vaccinatorContactNo = "0"+centerDetails.getContacts().get(centerDetails.getContacts().size()-1).getVaccinatorMobileNumber();
+                        if (centerDetails.getContacts().size() > 0) {
+                            if (centerDetails.getContacts().get(centerDetails.getContacts().size() - 1).getVaccinatorMobileNumber().length() == 11) {
+                                vaccinatorContactNo = centerDetails.getContacts().get(centerDetails.getContacts().size() - 1).getVaccinatorMobileNumber();
+                            } else {
+                                vaccinatorContactNo = "0" + centerDetails.getContacts().get(centerDetails.getContacts().size() - 1).getVaccinatorMobileNumber();
+                            }
+                            if (centerDetails.getContacts().get(centerDetails.getContacts().size() - 1).getVaccinatorMobileNumberBn().length() == 11) {
+                                vaccinatorContactNoBn = centerDetails.getContacts().get(centerDetails.getContacts().size() - 1).getVaccinatorMobileNumberBn();
+                            } else {
+                                vaccinatorContactNoBn = "০" + centerDetails.getContacts().get(centerDetails.getContacts().size() - 1).getVaccinatorMobileNumberBn();
+                            }
                         }
-                        if (centerDetails.getContacts().get(centerDetails.getContacts().size()-1).getVaccinatorMobileNumberBn().length() == 11){
-                            vaccinatorContactNoBn = centerDetails.getContacts().get(centerDetails.getContacts().size()-1).getVaccinatorMobileNumberBn();
-                        } else {
-                            vaccinatorContactNoBn = "০"+centerDetails.getContacts().get(centerDetails.getContacts().size()-1).getVaccinatorMobileNumberBn();
+                        else {
+                            vaccinatorContactNo = "N/A";
+                            vaccinatorContactNoBn = "পাওয়া যায়নি";
                         }
-
 //                        _______________________CONTACT PERSON CONTACT__________________________
                         String contactPersonContactNo, contactPersonContactNoBn;
-                        if (centerDetails.getContacts().get(centerDetails.getContacts().size()-1).getContactMobileNumber().length() == 11){
-                            contactPersonContactNo = centerDetails.getContacts().get(centerDetails.getContacts().size()-1).getContactMobileNumber();
+                        if (centerDetails.getContacts().size() > 0) {
+                            if (centerDetails.getContacts().get(centerDetails.getContacts().size() - 1).getContactMobileNumber().length() == 11) {
+                                contactPersonContactNo = centerDetails.getContacts().get(centerDetails.getContacts().size() - 1).getContactMobileNumber();
+                            } else {
+                                contactPersonContactNo = "0" + centerDetails.getContacts().get(centerDetails.getContacts().size() - 1).getContactMobileNumber();
+                            }
+                            if (centerDetails.getContacts().get(centerDetails.getContacts().size() - 1).getContactMobileNumberBn().length() == 11) {
+                                contactPersonContactNoBn = centerDetails.getContacts().get(centerDetails.getContacts().size() - 1).getContactMobileNumberBn();
+                            } else {
+                                contactPersonContactNoBn = "০" + centerDetails.getContacts().get(centerDetails.getContacts().size() - 1).getContactMobileNumberBn();
+                            }
                         } else {
-                            contactPersonContactNo = "0"+centerDetails.getContacts().get(centerDetails.getContacts().size()-1).getContactMobileNumber();
-                        }
-                        if (centerDetails.getContacts().get(centerDetails.getContacts().size()-1).getContactMobileNumberBn().length() == 11){
-                            contactPersonContactNoBn = centerDetails.getContacts().get(centerDetails.getContacts().size()-1).getContactMobileNumberBn();
-                        } else {
-                            contactPersonContactNoBn = "০"+centerDetails.getContacts().get(centerDetails.getContacts().size()-1).getContactMobileNumberBn();
+                            contactPersonContactNo = "N/A";
+                            contactPersonContactNoBn = "পাওয়া যায়নি";
                         }
 
-                        centerList.add(new Center(
-                                centerDetails.getId(),
-                                centerDetails.getVcName(),
-                                centerDetails.getVcNameBn(),
-                                address,
-                                addressBn,
-                                vaccinatorContactNo,
-                                vaccinatorContactNoBn,
-                                contactPersonContactNo,
-                                contactPersonContactNoBn,
-                                centerDetails.getDays().get(centerDetails.getDays().size()-1).getNineToThree(),
-                                centerDetails.getDays().get(centerDetails.getDays().size()-1).getFiveToSeven(),
-                                centerDetails.getVcOrganized(),
-                                centerDetails.getVcOrganizedBn(),
-                                centerDetails.getVcLattitude(),
-                                centerDetails.getVcLongitude()
-                        ));
-                        if (centerDetails.getVcLattitude() != 0 && centerDetails.getVcLongitude() != 0){
+                        if (centerDetails.getDays().size() != 0) {
+                            centerList.add(new Center(
+                                    centerDetails.getId(),
+                                    centerDetails.getVcName(),
+                                    centerDetails.getVcNameBn(),
+                                    address,
+                                    addressBn,
+                                    vaccinatorContactNo,
+                                    vaccinatorContactNoBn,
+                                    contactPersonContactNo,
+                                    contactPersonContactNoBn,
+                                    centerDetails.getDays().get(centerDetails.getDays().size() - 1).getNineToThree(),
+                                    centerDetails.getDays().get(centerDetails.getDays().size() - 1).getFiveToSeven(),
+                                    centerDetails.getVcOrganized(),
+                                    centerDetails.getVcOrganizedBn(),
+                                    centerDetails.getVcLattitude(),
+                                    centerDetails.getVcLongitude()
+                            ));
+                        } else {
+                            centerList.add(new Center(
+                                    centerDetails.getId(),
+                                    centerDetails.getVcName(),
+                                    centerDetails.getVcNameBn(),
+                                    address,
+                                    addressBn,
+                                    vaccinatorContactNo,
+                                    vaccinatorContactNoBn,
+                                    contactPersonContactNo,
+                                    contactPersonContactNoBn,
+                                    "N/A",
+                                    "N/A",
+                                    centerDetails.getVcOrganized(),
+                                    centerDetails.getVcOrganizedBn(),
+                                    centerDetails.getVcLattitude(),
+                                    centerDetails.getVcLongitude()
+                            ));
+                        }
+
+
+                        if (centerDetails.getVcLattitude() != 0 && centerDetails.getVcLongitude() != 0) {
                             centerLocationList.add(new CenterLocation(
                                     centerDetails.getVcName(),
                                     centerDetails.getVcLattitude(),
@@ -496,7 +520,7 @@ public class MapActivity extends AppCompatActivity
 //        startActivity(intent);
 //    }
 
-    public void isCheckLocationServiceisOn (final Context context) {
+    public void isCheckLocationServiceisOn(final Context context) {
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         boolean gps_enabled = false;
@@ -504,15 +528,15 @@ public class MapActivity extends AppCompatActivity
 
         try {
             gps_enabled = Objects.requireNonNull(lm).isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ignored) {
         }
-        catch(Exception ignored) {}
 
         try {
             network_enabled = Objects.requireNonNull(lm).isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ignored) {
         }
-        catch(Exception ignored) {}
 
-        if(!gps_enabled && !network_enabled) {
+        if (!gps_enabled && !network_enabled) {
             // notify user
             AlertDialog.Builder dialog = new AlertDialog.Builder(context);
             dialog.setMessage("Location Services Disabled. \n Please enable location services.");
@@ -551,20 +575,29 @@ public class MapActivity extends AppCompatActivity
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if(googleApiClient.isConnected()) {
+        if (googleApiClient.isConnected()) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             mFusedLocationProviderClient.getLastLocation()
                     .addOnCompleteListener(this, new OnCompleteListener<Location>() {
                         @Override
                         public void onComplete(@NonNull Task<Location> task) {
                             if (task.isSuccessful() && task.getResult() != null) {
-                                if (savedLat != null && savedLong != null){
+                                if (savedLat != null && savedLong != null) {
                                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                             new LatLng(savedLat,
                                                     savedLong), 15));
                                     currentLocation = new CurrentLocation(savedLat, savedLong);
                                     lastLocation = new LastLocation(savedLat, savedLong);
-                                }
-                                else {
+                                } else {
                                     mLastLocation = task.getResult();
                                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                             new LatLng(mLastLocation.getLatitude(),

@@ -54,6 +54,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private String currentLatLong, directionLatLong;
     String lastLat, lastlong;
 
+    String serverUrl = "http://" + "18.140.146.240:9001";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -303,10 +305,9 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<ImageFind> call, @NonNull Response<ImageFind> response) {
                 if (response.code() == 200){
-                    assert response.body() != null;
-                    if (!response.body().getImageLocation().equals("") || response.body().getImageLocation() != null){
+                    if (response.body() != null && !response.body().getImageLocation().equals("") && response.body().getImageLocation() != null){
                         String[] imagePath = response.body().getImageLocation().split("/");
-                        final String webPath = "http://18.140.146.240:9001/public/images/" + imagePath[imagePath.length-1];
+                        final String webPath = serverUrl + "/public/images/" + imagePath[imagePath.length-1];
 
                         Picasso.get().load(webPath)
                                 .placeholder(R.drawable.ic_image_black_24dp)
@@ -438,7 +439,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 }
             }
         }
-        Log.d("weekday", String.valueOf(weekDay));
+
         return String.valueOf(weekDay);
     }
 
@@ -447,7 +448,6 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("opentext", commentText.getText().toString().trim());
         jsonObject.addProperty("centerId", center.getCenterID());
-        Log.d("comment", String.valueOf(jsonObject));
         Call<ResponseBody> call = apiInterface.sendFeedBack(jsonObject);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -473,7 +473,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void viewPDF(){
-        Uri webpage = Uri.parse("http://103.247.238.51:9115/public/images/EPI_Vaccination_Schedule2020.pdf");
+        Uri webpage = Uri.parse(serverUrl + "/public/images/EPI_Vaccination_Schedule2020.pdf");
         Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
